@@ -1,0 +1,14 @@
+FROM rust AS build
+
+ENV VERSION git
+
+RUN cargo install --git https://github.com/getzola/zola.git --force
+
+FROM ubuntu:18.04
+
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
+COPY --from=build /usr/local/cargo/bin/zola /usr/local/bin/
+
+CMD ["sh", "-c", "zola serve"]
+
